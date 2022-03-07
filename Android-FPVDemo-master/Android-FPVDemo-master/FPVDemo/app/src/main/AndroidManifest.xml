@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.dji.FPVDemo">
 
     <!-- DJI SDK need permission -->
@@ -13,7 +14,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -45,9 +47,10 @@
         <uses-library android:name="com.android.future.usb.accessory" />
         <meta-data
             android:name="com.dji.sdk.API_KEY"
-            android:value="Please enter your App Key here." />
+            android:value="eee5634b056d9e547eab1c13" />
 
-        <service android:name="dji.sdk.sdkmanager.DJIGlobalService" >
+        <service android:name="dji.sdk.sdkmanager.DJIGlobalService"
+            tools:ignore="Instantiatable">
         </service>
         <!-- DJI SDK -->
 
@@ -73,5 +76,6 @@
             android:name=".MainActivity"
             android:screenOrientation="landscape" />
     </application>
+
 
 </manifest>

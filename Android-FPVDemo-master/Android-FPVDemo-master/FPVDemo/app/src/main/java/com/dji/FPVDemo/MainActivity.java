@@ -25,6 +25,7 @@ import dji.sdk.base.BaseProduct;
 import dji.sdk.camera.Camera;
 import dji.sdk.camera.VideoFeeder;
 import dji.sdk.codec.DJICodecManager;
+import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.useraccount.UserAccountManager;
 
 public class MainActivity extends Activity implements SurfaceTextureListener,OnClickListener{
@@ -64,6 +65,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         };
 
         Camera camera = FPVDemoApplication.getCameraInstance();
+
 
         if (camera != null) {
 
@@ -107,24 +109,8 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
 
     protected void onProductChange() {
         initPreviewer();
-        loginAccount();
     }
 
-    private void loginAccount(){
-
-        UserAccountManager.getInstance().logIntoDJIUserAccount(this,
-                new CommonCallbacks.CompletionCallbackWith<UserAccountState>() {
-                    @Override
-                    public void onSuccess(final UserAccountState userAccountState) {
-                        Log.e(TAG, "Login Success");
-                    }
-                    @Override
-                    public void onFailure(DJIError error) {
-                        showToast("Login Error:"
-                                + error.getDescription());
-                    }
-                });
-    }
 
     @Override
     public void onResume() {
@@ -349,7 +335,6 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
 
     // Method for starting recording
     private void startRecord(){
-
         final Camera camera = FPVDemoApplication.getCameraInstance();
         if (camera != null) {
             camera.startRecordVideo(djiError -> {

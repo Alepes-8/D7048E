@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
+import com.chaquo.python.Python;
+
 import dji.common.error.DJIError;
 import dji.common.error.DJISDKError;
 import dji.sdk.base.BaseComponent;
@@ -69,6 +71,8 @@ public class FPVDemoApplication extends Application{
     public void onCreate() {
         super.onCreate();
         mHandler = new Handler(Looper.getMainLooper());
+        Python.getInstance().getModule("test.py");
+
 
         /**
          * When starting SDK services, an instance of interface DJISDKManager.DJISDKManagerCallback will be used to listen to

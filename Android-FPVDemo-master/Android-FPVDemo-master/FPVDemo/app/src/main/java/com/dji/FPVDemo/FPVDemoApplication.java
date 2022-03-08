@@ -81,7 +81,7 @@ public class FPVDemoApplication extends Application{
     public void onCreate() {
         super.onCreate();
         mHandler = new Handler(Looper.getMainLooper());
-        Python.getInstance().getModule("test.py");
+        Python.getInstance().getModule("test");
 
 
         /**

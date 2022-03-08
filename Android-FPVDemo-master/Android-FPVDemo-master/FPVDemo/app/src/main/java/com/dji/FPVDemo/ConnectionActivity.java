@@ -23,6 +23,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.chaquo.python.Python;
+
 import dji.common.error.DJIError;
 import dji.common.error.DJISDKError;
 import dji.log.DJILog;
@@ -40,6 +43,7 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
     private TextView mTextProduct;
     private TextView mVersionTv;
     private Button mBtnOpen;
+    private Button mBtnTest;
     private static final String[] REQUIRED_PERMISSION_LIST = new String[]{
             Manifest.permission.VIBRATE,
             Manifest.permission.INTERNET,
@@ -217,6 +221,9 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
         mBtnOpen = (Button) findViewById(R.id.btn_open);
         mBtnOpen.setOnClickListener(this);
         mBtnOpen.setEnabled(false);
+        mBtnTest = (Button) findViewById(R.id.btn_test);
+        mBtnTest.setOnClickListener(this);
+        mBtnTest.setEnabled(true);
         mVersionTv = (TextView) findViewById(R.id.textView2);
         mVersionTv.setText(getResources().getString(R.string.sdk_version, DJISDKManager.getInstance().getRegistrationSDKVersion()));
     }
@@ -263,6 +270,10 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
             case R.id.btn_open: {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
+                break;
+            }
+            case R.id.btn_test: {
+                Python.getInstance().getModule("test").callAttr("test");
                 break;
             }
             default:

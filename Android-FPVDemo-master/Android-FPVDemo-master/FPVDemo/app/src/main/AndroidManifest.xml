@@ -47,7 +47,9 @@
         <uses-library android:name="com.android.future.usb.accessory" />
         <meta-data
             android:name="com.dji.sdk.API_KEY"
-            android:value="eee5634b056d9e547eab1c13" />
+
+            android:value="ac1292ccbdda53971a3244e5" />
+
 
         <service android:name="dji.sdk.sdkmanager.DJIGlobalService"
             tools:ignore="Instantiatable">
@@ -56,7 +58,8 @@
 
         <activity android:name=".ConnectionActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor"
+            android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

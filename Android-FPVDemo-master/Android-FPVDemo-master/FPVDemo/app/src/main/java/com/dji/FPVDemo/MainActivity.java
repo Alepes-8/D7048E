@@ -18,6 +18,7 @@ import android.widget.ToggleButton;
 import dji.common.camera.SettingsDefinitions;
 import dji.common.camera.SystemState;
 import dji.common.error.DJIError;
+import dji.common.flightcontroller.virtualstick.FlightControlData;
 import dji.common.product.Model;
 import dji.common.useraccount.UserAccountState;
 import dji.common.util.CommonCallbacks;
@@ -37,8 +38,8 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
     protected DJICodecManager mCodecManager = null;
 
     protected TextureView mVideoSurface = null;
-    private Button mCaptureBtn, mShootPhotoModeBtn, mRecordVideoModeBtn;
-    private ToggleButton mRecordBtn;
+    private Button mCaptureBtn, mUpBtn, mDownBtn;
+    private Button mTakeoffBtn;
     private TextView recordingTime;
 
     private Handler handler;
@@ -155,31 +156,21 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
 
         recordingTime = (TextView) findViewById(R.id.timer);
         mCaptureBtn = (Button) findViewById(R.id.btn_capture);
-        mRecordBtn = (ToggleButton) findViewById(R.id.btn_record);
-        mShootPhotoModeBtn = (Button) findViewById(R.id.btn_shoot_photo_mode);
-        mRecordVideoModeBtn = (Button) findViewById(R.id.btn_record_video_mode);
+        mTakeoffBtn = (Button) findViewById(R.id.btn_takeoff);
+        mUpBtn = (Button) findViewById(R.id.btn_up);
+        mDownBtn = (Button) findViewById(R.id.btn_down);
 
         if (null != mVideoSurface) {
             mVideoSurface.setSurfaceTextureListener(this);
         }
 
         mCaptureBtn.setOnClickListener(this);
-        mRecordBtn.setOnClickListener(this);
-        mShootPhotoModeBtn.setOnClickListener(this);
-        mRecordVideoModeBtn.setOnClickListener(this);
+        mTakeoffBtn.setOnClickListener(this);
+        mUpBtn.setOnClickListener(this);
+        mDownBtn.setOnClickListener(this);
 
         recordingTime.setVisibility(View.INVISIBLE);
 
-        mRecordBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    startRecord();
-                } else {
-                    stopRecord();
-                }
-            }
-        });
     }
 
     private void initPreviewer() {
@@ -249,24 +240,48 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
             case R.id.btn_capture:
                 captureAction();
                 break;
-            case R.id.btn_shoot_photo_mode:
-                if (isMavicAir2() || isM300()) {
-                    switchCameraFlatMode(SettingsDefinitions.FlatCameraMode.PHOTO_SINGLE);
-                }else {
-                    switchCameraMode(SettingsDefinitions.CameraMode.SHOOT_PHOTO);
-                }
+            case R.id.btn_up:
+                up();
                 break;
-            case R.id.btn_record_video_mode:
-                if (isMavicAir2() || isM300()) {
-                    switchCameraFlatMode(SettingsDefinitions.FlatCameraMode.VIDEO_NORMAL);
-                }else {
-                    switchCameraMode(SettingsDefinitions.CameraMode.RECORD_VIDEO);
-                }
+            case R.id.btn_down:
+                down();
+                break;
+            case R.id.btn_takeoff:
+                takeoff();
                 break;
             default:
                 break;
         }
     }
+    private void takeoff(){
+        FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
+        if(!flightController.isVirtualStickControlModeAvailable()){
+            flightController.setVirtualStickModeEnabled(true, null);
+        }
+        flightController.startTakeoff(null);
+    }
+
+    private void up(){
+        FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
+        if(!flightController.isVirtualStickControlModeAvailable()){
+            flightController.setVirtualStickModeEnabled(true, null);
+        }
+        FlightControlData flightControlData = new FlightControlData(0, 0, 0 , 0);
+        float verticalThrottle = flightControlData.getVerticalThrottle();
+        flightControlData.setVerticalThrottle((float)(verticalThrottle + 0.1));
+        flightController.sendVirtualStickFlightControlData(flightControlData, null);
+    }
+    private void down(){
+        FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
+        if(!flightController.isVirtualStickControlModeAvailable()){
+            flightController.setVirtualStickModeEnabled(true, null);
+        }
+        FlightControlData flightControlData = new FlightControlData(0, 0, 0 , 0);
+        float verticalThrottle = flightControlData.getVerticalThrottle();
+        flightControlData.setVerticalThrottle((float)(verticalThrottle + 0.1));
+        flightController.sendVirtualStickFlightControlData(flightControlData, null);
+    }
+
 
     private void switchCameraFlatMode(SettingsDefinitions.FlatCameraMode flatCameraMode){
         Camera camera = FPVDemoApplication.getCameraInstance();

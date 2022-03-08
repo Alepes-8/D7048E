@@ -27,34 +27,29 @@
         android:text="Capture" 
         android:textSize="12sp"/>
 
-    <ToggleButton
-        android:id="@+id/btn_record"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Start Record"
-        android:textOff="Start Record"
-        android:textOn="Stop Record"
-        android:layout_weight="1"
-        android:layout_gravity="center_vertical"
-        android:textSize="12dp"
-        android:checked="false" />
-     
-    <Button
-        android:id="@+id/btn_shoot_photo_mode"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:text="Shoot Photo Mode"
-        android:textSize="12sp"/>
+         <Button
+             android:id="@+id/btn_takeoff"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:layout_weight="1"
+             android:text="Takeoff" />
 
-    <Button
-        android:id="@+id/btn_record_video_mode"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Record Video Mode"
-        android:layout_weight="1"
-        android:layout_gravity="center_vertical" />
+         <Button
+             android:id="@+id/btn_up"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center_vertical"
+             android:layout_weight="1"
+             android:text="Up"
+             android:textSize="12sp" />
+
+         <Button
+             android:id="@+id/btn_down"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center_vertical"
+             android:layout_weight="1"
+             android:text="Down" />
 
      </LinearLayout>
 

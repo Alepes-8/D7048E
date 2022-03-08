@@ -1,7 +1,11 @@
 
-def test():
+def helloWorld():
     print("Hello World")
 
+def printString(s):
+    print(s)
 
-if __name__ == "__main__":
-    test()
+def sum(x, y):
+    return x + y
+
+def getAction(x):

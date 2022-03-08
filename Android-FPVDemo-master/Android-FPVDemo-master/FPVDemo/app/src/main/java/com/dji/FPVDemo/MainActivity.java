@@ -15,6 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.chaquo.python.PyObject;
+import com.chaquo.python.Python;
+
 import dji.common.camera.SettingsDefinitions;
 import dji.common.camera.SystemState;
 import dji.common.error.DJIError;
@@ -38,7 +41,6 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
     protected VideoFeeder.VideoDataListener mReceivedVideoDataListener = null;
 
     FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
-
 
 
     // Codec for video live view
@@ -69,6 +71,11 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
                 if (mCodecManager != null) {
                     mCodecManager.sendDataToDecoder(videoBuffer, size);
                 }
+                Python py = Python.getInstance();
+                PyObject module = py.getModule("test");
+                module.callAttr("getAction", videoBuffer);
+
+
             }
         };
 
@@ -245,6 +252,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
     @Override
     public void onClick(View v) {
 
+
         switch (v.getId()) {
             case R.id.btn_capture:
                 captureAction();
@@ -358,6 +366,11 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
                 });
             }
         }
+    }
+
+    private void sendImage(){
+        final Camera camera = FPVDemoApplication.getCameraInstance();
+        //camera.getVideoStream
     }
 
     private void takePhoto(){

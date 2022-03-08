@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
+import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 
 import dji.common.error.DJIError;
@@ -81,7 +82,13 @@ public class FPVDemoApplication extends Application{
     public void onCreate() {
         super.onCreate();
         mHandler = new Handler(Looper.getMainLooper());
-        Python.getInstance().getModule("test.py");
+        /*Python py = Python.getInstance();
+        PyObject module = py.getModule("test");
+        module.callAttr("helloWorld");
+        module.callAttr("printString", "I made it!");
+        int sum = module.callAttr("sum", 3, 6).toInt();
+        System.out.println(sum);*/
+
 
 
         /**

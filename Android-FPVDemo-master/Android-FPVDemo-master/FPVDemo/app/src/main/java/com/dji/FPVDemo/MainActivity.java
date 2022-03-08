@@ -19,6 +19,9 @@ import dji.common.camera.SettingsDefinitions;
 import dji.common.camera.SystemState;
 import dji.common.error.DJIError;
 import dji.common.flightcontroller.virtualstick.FlightControlData;
+import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
+import dji.common.flightcontroller.virtualstick.VerticalControlMode;
+import dji.common.flightcontroller.virtualstick.YawControlMode;
 import dji.common.product.Model;
 import dji.common.useraccount.UserAccountState;
 import dji.common.util.CommonCallbacks;
@@ -33,6 +36,10 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
 
     private static final String TAG = MainActivity.class.getName();
     protected VideoFeeder.VideoDataListener mReceivedVideoDataListener = null;
+
+    FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
+
+
 
     // Codec for video live view
     protected DJICodecManager mCodecManager = null;
@@ -259,8 +266,9 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         }
     }
 
+
+
     private void takeoff(){
-        FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
         if(!flightController.isVirtualStickControlModeAvailable()){
             flightController.setVirtualStickModeEnabled(true, null);
         }
@@ -268,7 +276,6 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
     }
 
     private void landing(){
-        FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
         if(!flightController.isVirtualStickControlModeAvailable()){
             flightController.setVirtualStickModeEnabled(true, null);
         }
@@ -277,25 +284,33 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
     }
 
     private void up(){
-        FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
+        flightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
+        flightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
+        flightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
+
         if(!flightController.isVirtualStickControlModeAvailable()){
             flightController.setVirtualStickModeEnabled(true, null);
         }
-        FlightControlData flightControlData = new FlightControlData(0, 0, 0 , 0);
-        float verticalThrottle = flightControlData.getVerticalThrottle();
-        flightControlData.setVerticalThrottle((float)(verticalThrottle + 0.1));
-        flightController.sendVirtualStickFlightControlData(flightControlData, null);
+        float pitch = 0;
+        float roll = 0;
+        float yaw = 0;
+        float throttle = (float) 0.1;
+        flightController.sendVirtualStickFlightControlData(new FlightControlData(pitch, roll, yaw, throttle), null);
     }
 
     private void down(){
-        FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
+        flightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
+        flightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
+        flightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
+
         if(!flightController.isVirtualStickControlModeAvailable()){
             flightController.setVirtualStickModeEnabled(true, null);
         }
-        FlightControlData flightControlData = new FlightControlData(0, 0, 0 , 0);
-        float verticalThrottle = flightControlData.getVerticalThrottle();
-        flightControlData.setVerticalThrottle((float)(verticalThrottle + 0.1));
-        flightController.sendVirtualStickFlightControlData(flightControlData, null);
+        float pitch = 0;
+        float roll = 0;
+        float yaw = 0;
+        float throttle = (float) -0.1;
+        flightController.sendVirtualStickFlightControlData(new FlightControlData(pitch, roll, yaw, throttle), null);
     }
 
 

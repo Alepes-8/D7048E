@@ -39,7 +39,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
 
     protected TextureView mVideoSurface = null;
     private Button mCaptureBtn, mUpBtn, mDownBtn;
-    private Button mTakeoffBtn;
+    private Button mTakeoffBtn, mLandingBtn;
     private TextView recordingTime;
 
     private Handler handler;
@@ -159,6 +159,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         mTakeoffBtn = (Button) findViewById(R.id.btn_takeoff);
         mUpBtn = (Button) findViewById(R.id.btn_up);
         mDownBtn = (Button) findViewById(R.id.btn_down);
+        mLandingBtn = (Button) findViewById(R.id.btn_landing);
 
         if (null != mVideoSurface) {
             mVideoSurface.setSurfaceTextureListener(this);
@@ -168,6 +169,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         mTakeoffBtn.setOnClickListener(this);
         mUpBtn.setOnClickListener(this);
         mDownBtn.setOnClickListener(this);
+        mLandingBtn.setOnClickListener(this);
 
         recordingTime.setVisibility(View.INVISIBLE);
 
@@ -249,16 +251,29 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
             case R.id.btn_takeoff:
                 takeoff();
                 break;
+            case R.id.btn_landing:
+                landing();
+                break;
             default:
                 break;
         }
     }
+
     private void takeoff(){
         FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
         if(!flightController.isVirtualStickControlModeAvailable()){
             flightController.setVirtualStickModeEnabled(true, null);
         }
         flightController.startTakeoff(null);
+    }
+
+    private void landing(){
+        FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
+        if(!flightController.isVirtualStickControlModeAvailable()){
+            flightController.setVirtualStickModeEnabled(true, null);
+        }
+        flightController.startLanding(null);
+        flightController.confirmLanding(null);
     }
 
     private void up(){
@@ -271,6 +286,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         flightControlData.setVerticalThrottle((float)(verticalThrottle + 0.1));
         flightController.sendVirtualStickFlightControlData(flightControlData, null);
     }
+
     private void down(){
         FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
         if(!flightController.isVirtualStickControlModeAvailable()){

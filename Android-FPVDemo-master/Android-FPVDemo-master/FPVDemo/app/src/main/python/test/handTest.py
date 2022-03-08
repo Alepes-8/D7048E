@@ -1,5 +1,6 @@
 import cv2
 from cvzone.HandTrackingModule import HandDetector
+import numpy as np
 
 wCam, hCam = 640, 480
 
@@ -10,10 +11,11 @@ cap.set(4, hCam)
 
 detector = HandDetector()
 
+def handTest(image_bytes):
+    img = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), -1)
 
-def handTest():
     # Get image frame
-    success, img = cap.read()
+    #success, img = cap.read()
     # Find the hand and its landmarks
     hands, img = detector.findHands(img)  # with draw
     # hands = detector.findHands(img, draw=False)  # without draw

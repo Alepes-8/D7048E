@@ -47,7 +47,9 @@
         <uses-library android:name="com.android.future.usb.accessory" />
         <meta-data
             android:name="com.dji.sdk.API_KEY"
+
             android:value="ac1292ccbdda53971a3244e5" />
+
 
         <service android:name="dji.sdk.sdkmanager.DJIGlobalService"
             tools:ignore="Instantiatable">
@@ -77,5 +79,6 @@
             android:name=".MainActivity"
             android:screenOrientation="landscape" />
     </application>
+
 
 </manifest>

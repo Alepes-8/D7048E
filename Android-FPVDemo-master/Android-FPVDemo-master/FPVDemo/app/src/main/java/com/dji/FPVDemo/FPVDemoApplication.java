@@ -81,6 +81,8 @@ public class FPVDemoApplication extends Application{
     public void onCreate() {
         super.onCreate();
         mHandler = new Handler(Looper.getMainLooper());
+        Python.getInstance().getModule("test.py");
+
 
         /**
          * When starting SDK services, an instance of interface DJISDKManager.DJISDKManagerCallback will be used to listen to

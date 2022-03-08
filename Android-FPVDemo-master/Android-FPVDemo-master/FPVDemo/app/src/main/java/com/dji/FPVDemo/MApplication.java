@@ -23,8 +23,10 @@ public class MApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         if(!Python.isStarted()){
             Python.start(new AndroidPlatform(this));
+
         }
         fpvDemoApplication.onCreate();
     }

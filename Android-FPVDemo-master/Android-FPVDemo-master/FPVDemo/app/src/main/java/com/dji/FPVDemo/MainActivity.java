@@ -73,7 +73,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
                 }
                 Python py = Python.getInstance();
                 PyObject module = py.getModule("test");
-                System.out.println(module.callAttr("getControlSignal", videoBuffer));
+                module.callAttr("handTest", videoBuffer);
 
 
             }

@@ -11,11 +11,14 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
+import com.chaquo.python.Python;
+
 import dji.common.error.DJIError;
 import dji.common.error.DJISDKError;
 import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.camera.Camera;
+import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.products.Aircraft;
 import dji.sdk.products.HandHeld;
 import dji.sdk.sdkmanager.DJISDKInitEvent;
@@ -63,6 +66,15 @@ public class FPVDemoApplication extends Application{
             camera = ((HandHeld) getProductInstance()).getCamera();
         }
         return camera;
+    }
+
+    public static synchronized FlightController getFlightControllerInstance() {
+        if (getProductInstance() == null) return null;
+        FlightController flightController = null;
+        if (getProductInstance() instanceof Aircraft){
+            flightController = ((Aircraft) getProductInstance()).getFlightController();
+        }
+        return flightController;
     }
 
     @Override

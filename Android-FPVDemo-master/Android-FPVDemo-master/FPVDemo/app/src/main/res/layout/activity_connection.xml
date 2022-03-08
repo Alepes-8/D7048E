@@ -43,13 +43,13 @@
         android:textSize="20dp" />
 
     <TextView
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="430dp"
         android:text="@string/sdk_version"
-        android:textSize="15dp"
-        android:id="@+id/textView2" />
+        android:textSize="15dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -63,5 +63,11 @@
         android:textColor="@color/colorBlack"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/btn_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button" />
 
 </RelativeLayout>

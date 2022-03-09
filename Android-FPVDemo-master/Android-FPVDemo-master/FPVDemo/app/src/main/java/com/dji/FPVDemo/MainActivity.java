@@ -164,6 +164,11 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
                     frameLayout.requestLayout();
                 }
 
+                Bitmap bitmap = BitmapFactory.decodeByteArray(videoBuffer, 0, size);
+
+                hands.send(bitmap);
+
+
 
 
             }

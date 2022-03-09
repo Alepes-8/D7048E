@@ -69,6 +69,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
     protected VideoFeeder.VideoDataListener mReceivedVideoDataListener = null;
 
     FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
+
     HandTracking handTracking = new HandTracking();
 
     // Codec for video live view
@@ -103,6 +104,11 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
                     handTracking.stopCurrentPipeline();
                     handTracking.setupStreamingModePipeline(HandTracking.InputSource.VIDEO, videoBuffer);
                 }
+                Python py = Python.getInstance();
+                PyObject module = py.getModule("test");
+                System.out.println(module.callAttr("getControlSignal", videoBuffer));
+
+
             }
         };
 
@@ -305,6 +311,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
     @Override
     public void onClick(View v) {
 
+
         switch (v.getId()) {
             case R.id.btn_capture:
                 captureAction();
@@ -440,6 +447,11 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
                 });
             }
         }
+    }
+
+    private void sendImage(){
+        final Camera camera = FPVDemoApplication.getCameraInstance();
+        //camera.getVideoStream
     }
 
     private void takePhoto(){

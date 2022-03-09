@@ -1,5 +1,7 @@
 package com.dji.FPVDemo;
 
+import static dji.common.flightcontroller.FlightOrientationMode.*;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.SurfaceTexture;
@@ -18,12 +20,9 @@ import android.widget.Toast;
 
 import android.widget.ToggleButton;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultLauncher;
+
 import androidx.activity.result.contract.ActivityResultContracts;
 
-import com.chaquo.python.PyObject;
-import com.chaquo.python.Python;
 
 import com.google.mediapipe.solutioncore.CameraInput;
 import com.google.mediapipe.solutioncore.SolutionGlSurfaceView;
@@ -48,6 +47,7 @@ import com.google.mediapipe.solutions.hands.HandsResult;
 import dji.common.camera.SettingsDefinitions;
 import dji.common.camera.SystemState;
 import dji.common.error.DJIError;
+import dji.common.flightcontroller.FlightOrientationMode;
 import dji.common.flightcontroller.virtualstick.FlightControlData;
 import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
 import dji.common.flightcontroller.virtualstick.VerticalControlMode;
@@ -61,6 +61,30 @@ import dji.sdk.camera.VideoFeeder;
 import dji.sdk.codec.DJICodecManager;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.useraccount.UserAccountManager;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.provider.MediaStore;
+import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.exifinterface.media.ExifInterface;
+// ContentResolver dependency
+import com.google.mediapipe.formats.proto.LandmarkProto.Landmark;
+import com.google.mediapipe.formats.proto.LandmarkProto.NormalizedLandmark;
+import com.google.mediapipe.framework.PacketCreator;
+import com.google.mediapipe.solutioncore.CameraInput;
+import com.google.mediapipe.solutioncore.SolutionGlSurfaceView;
+import com.google.mediapipe.solutioncore.VideoInput;
+import com.google.mediapipe.solutions.hands.HandLandmark;
+import com.google.mediapipe.solutions.hands.Hands;
+import com.google.mediapipe.solutions.hands.HandsOptions;
+import com.google.mediapipe.solutions.hands.HandsResult;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class MainActivity extends Activity implements SurfaceTextureListener,OnClickListener{
 
@@ -69,13 +93,14 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
 
     FlightController flightController = FPVDemoApplication.getFlightControllerInstance();
 
+    HandTracking handTracking = new HandTracking();
 
     // Codec for video live view
     protected DJICodecManager mCodecManager = null;
 
     protected TextureView mVideoSurface = null;
     private Button mCaptureBtn, mUpBtn, mDownBtn;
-    private Button mTakeoffBtn, mLandingBtn;
+    private Button mTakeoffBtn, mLandingBtn, mLeftBtn;
     private TextView recordingTime;
     private Hands hands;
     private static final boolean RUN_ON_GPU = true;
@@ -91,6 +116,8 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         handler = new Handler();
 
         initUI();
+        setupVideoDemoUiComponents();
+        setupLiveDemoUiComponents();
 
         // The callback for receiving the raw H264 video data for camera live view
         mReceivedVideoDataListener = new VideoFeeder.VideoDataListener() {
@@ -99,12 +126,10 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
             public void onReceive(byte[] videoBuffer, int size) {
                 if (mCodecManager != null) {
                     mCodecManager.sendDataToDecoder(videoBuffer, size);
+                    handTracking.stopCurrentPipeline();
+                    handTracking.setupStreamingModePipeline(HandTracking.InputSource.VIDEO, videoBuffer);
                 }
-                Python py = Python.getInstance();
-                PyObject module = py.getModule("test");
-                //module.callAttr("handTest", videoBuffer);
 
-                //VideoInput videoInput = new VideoInput();
 
 
             }
@@ -151,6 +176,31 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
 
         }
 
+    }
+
+
+    /** Sets up the UI components for the live demo with camera input. */
+    private void setupLiveDemoUiComponents() {
+        Button startCameraButton = findViewById(R.id.btn_start_camera);
+        startCameraButton.setOnClickListener(
+                v -> {
+                    if (handTracking.inputSource == HandTracking.InputSource.CAMERA) {
+                        return;
+                    }
+                    handTracking.stopCurrentPipeline();
+                    handTracking.setupStreamingModePipeline(HandTracking.InputSource.CAMERA, null);
+                });
+    }
+
+    /** Sets up the UI components for the video demo. */
+    private void setupVideoDemoUiComponents() {
+
+        Button loadVideoButton = findViewById(R.id.btn_load_video);
+        loadVideoButton.setOnClickListener(
+                v -> {
+                    handTracking.stopCurrentPipeline();
+                    handTracking.setupStreamingModePipeline(HandTracking.InputSource.VIDEO, null);
+                });
     }
 
 
@@ -206,6 +256,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         mUpBtn = (Button) findViewById(R.id.btn_up);
         mDownBtn = (Button) findViewById(R.id.btn_down);
         mLandingBtn = (Button) findViewById(R.id.btn_landing);
+        mLeftBtn = (Button) findViewById(R.id.btn_left);
 
         if (null != mVideoSurface) {
             mVideoSurface.setSurfaceTextureListener(this);
@@ -216,6 +267,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         mUpBtn.setOnClickListener(this);
         mDownBtn.setOnClickListener(this);
         mLandingBtn.setOnClickListener(this);
+        mLeftBtn.setOnClickListener(this);
 
         recordingTime.setVisibility(View.INVISIBLE);
 
@@ -301,12 +353,34 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
             case R.id.btn_landing:
                 landing();
                 break;
+            case R.id.btn_left:
+                left();
+                break;
             default:
                 break;
         }
     }
 
+    private void track(){
 
+    }
+
+    private void left(){
+        flightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
+        flightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
+        flightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
+        flightController.setFlightOrientationMode(FlightOrientationMode.HOME_LOCK, null);
+        if(!flightController.isVirtualStickControlModeAvailable()){
+            flightController.setVirtualStickModeEnabled(true, null);
+        }
+
+        float pitch = 0;
+        float roll = (float) -0.5;
+        float yaw = 0;
+        float throttle = 0;
+        flightController.sendVirtualStickFlightControlData(new FlightControlData(pitch, roll, yaw, throttle), null);
+
+    }
 
     private void takeoff(){
         if(!flightController.isVirtualStickControlModeAvailable()){
@@ -334,7 +408,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         float pitch = 0;
         float roll = 0;
         float yaw = 0;
-        float throttle = (float) 0.1;
+        float throttle = (float) 0.5;
         flightController.sendVirtualStickFlightControlData(new FlightControlData(pitch, roll, yaw, throttle), null);
     }
 
@@ -349,7 +423,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         float pitch = 0;
         float roll = 0;
         float yaw = 0;
-        float throttle = (float) -0.1;
+        float throttle = (float) -0.5;
         flightController.sendVirtualStickFlightControlData(new FlightControlData(pitch, roll, yaw, throttle), null);
     }
 

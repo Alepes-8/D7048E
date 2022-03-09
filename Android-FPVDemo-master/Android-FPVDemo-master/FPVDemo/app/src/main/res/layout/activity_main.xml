@@ -7,14 +7,24 @@
     <TextureView
         android:id="@+id/video_previewer_surface"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+
+        android:layout_height="590dp"
         android:layout_above="@+id/linearLayout"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center" />
+    
+     <LinearLayout 
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_alignParentBottom="true"
+         android:id="@+id/linearLayout">
+    <Button
+        android:id="@+id/btn_capture"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
@@ -75,20 +85,38 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+
+        android:layout_height="89dp"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/button_load_video"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="load Video" />
+            android:id="@+id/btn_left"
+            android:layout_width="101dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Left" />
 
         <Button
-            android:id="@+id/button_start_camera"
+            android:id="@+id/btn_load_video"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="start camera" />
+            android:layout_height="89dp"
+            android:layout_weight="1"
+            android:text="Load Video" />
+
+        <Button
+            android:id="@+id/btn_start_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="89dp"
+            android:layout_weight="1"
+            android:text="Start Camera" />
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="wrap_content"
+            android:layout_height="89dp"
+            android:layout_weight="1"
+            android:text="Button" />
+
     </LinearLayout>
 
 </RelativeLayout>

@@ -1,16 +1,3 @@
-// Copyright 2021 The MediaPipe Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
 package com.dji.FPVDemo;
 
@@ -42,19 +29,22 @@ import java.io.InputStream;
 
 /** Main activity of MediaPipe Hands app. */
 public class HandTracking extends AppCompatActivity {
-    private static final String TAG = "HandTracking";
+
+    private static final String TAG = "MainActivity";
+
 
     private Hands hands;
     // Run the pipeline and the model inference on GPU or CPU.
     private static final boolean RUN_ON_GPU = true;
 
-    private enum InputSource {
+
+    protected enum InputSource {
         UNKNOWN,
-        IMAGE,
         VIDEO,
         CAMERA,
     }
-    private InputSource inputSource = InputSource.UNKNOWN;
+    protected InputSource inputSource = InputSource.UNKNOWN;
+
 
     // Image demo UI and image loader components.
     private ActivityResultLauncher<Intent> imageGetter;
@@ -70,10 +60,11 @@ public class HandTracking extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        //setupStaticImageDemoUiComponents();
-        setupVideoDemoUiComponents();
-        setupLiveDemoUiComponents();
+
+//        setContentView(R.layout.activity_main);
+//        setupVideoDemoUiComponents();
+//        setupLiveDemoUiComponents();
+
     }
 
     @Override
@@ -101,7 +92,9 @@ public class HandTracking extends AppCompatActivity {
         }
     }
 
-    private Bitmap downscaleBitmap(Bitmap originalBitmap) {
+
+    protected Bitmap downscaleBitmap(Bitmap originalBitmap) {
+
         double aspectRatio = (double) originalBitmap.getWidth() / originalBitmap.getHeight();
         int width = imageView.getWidth();
         int height = imageView.getHeight();
@@ -113,7 +106,9 @@ public class HandTracking extends AppCompatActivity {
         return Bitmap.createScaledBitmap(originalBitmap, width, height, false);
     }
 
-    private Bitmap rotateBitmap(Bitmap inputBitmap, InputStream imageData) throws IOException {
+
+    protected Bitmap rotateBitmap(Bitmap inputBitmap, InputStream imageData) throws IOException {
+
         int orientation =
                 new ExifInterface(imageData)
                         .getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
@@ -138,132 +133,57 @@ public class HandTracking extends AppCompatActivity {
                 inputBitmap, 0, 0, inputBitmap.getWidth(), inputBitmap.getHeight(), matrix, true);
     }
 
-    /* Sets up the UI components for the static image demo.
-    private void setupStaticImageDemoUiComponents() {
-        // The Intent to access gallery and read images as bitmap.
-        imageGetter =
-                registerForActivityResult(
-                        new ActivityResultContracts.StartActivityForResult(),
-                        result -> {
-                            Intent resultIntent = result.getData();
-                            if (resultIntent != null) {
-                                if (result.getResultCode() == RESULT_OK) {
-                                    Bitmap bitmap = null;
-                                    try {
-                                        bitmap =
-                                                downscaleBitmap(
-                                                        MediaStore.Images.Media.getBitmap(
-                                                                this.getContentResolver(), resultIntent.getData()));
-                                    } catch (IOException e) {
-                                        Log.e(TAG, "Bitmap reading error:" + e);
-                                    }
-                                    try {
-                                        InputStream imageData =
-                                                this.getContentResolver().openInputStream(resultIntent.getData());
-                                        bitmap = rotateBitmap(bitmap, imageData);
-                                    } catch (IOException e) {
-                                        Log.e(TAG, "Bitmap rotation error:" + e);
-                                    }
-                                    if (bitmap != null) {
-                                        hands.send(bitmap);
-                                    }
-                                }
-                            }
-                        });
-        Button loadImageButton = findViewById(R.id.button_load_picture);
-        loadImageButton.setOnClickListener(
-                v -> {
-                    if (inputSource != InputSource.IMAGE) {
-                        stopCurrentPipeline();
-                        setupStaticImageModePipeline();
-                    }
-                    // Reads images from gallery.
-                    Intent pickImageIntent = new Intent(Intent.ACTION_PICK);
-                    pickImageIntent.setDataAndType(MediaStore.Images.Media.INTERNAL_CONTENT_URI, "image/*");
-                    imageGetter.launch(pickImageIntent);
-                });
-        imageView = new HandsResultImageView(this);
-    }*/
 
 
-    /** Sets up core workflow for static image mode. */
-//    private void setupStaticImageModePipeline() {
-//        this.inputSource = InputSource.IMAGE;
-//        // Initializes a new MediaPipe Hands solution instance in the static image mode.
-//        hands =
-//                new Hands(
-//                        this,
-//                        HandsOptions.builder()
-//                                .setStaticImageMode(true)
-//                                .setMaxNumHands(2)
-//                                .setRunOnGpu(RUN_ON_GPU)
-//                                .build());
-//
-//        // Connects MediaPipe Hands solution to the user-defined HandsResultImageView.
-//        hands.setResultListener(
-//                handsResult -> {
-//                    logWristLandmark(handsResult, /*showPixelValues=*/ true);
-//                    imageView.setHandsResult(handsResult);
-//                    runOnUiThread(() -> imageView.update());
+//    /** Sets up the UI components for the video demo. */
+//    private void setupVideoDemoUiComponents() {
+//        // The Intent to access gallery and read a video file.
+//        videoGetter =
+//                registerForActivityResult(
+//                        new ActivityResultContracts.StartActivityForResult(),
+//                        result -> {
+//                            Intent resultIntent = result.getData();
+//                            if (resultIntent != null) {
+//                                if (result.getResultCode() == RESULT_OK) {
+//                                    glSurfaceView.post(
+//                                            () ->
+//                                                    videoInput.start(
+//                                                            this,
+//                                                            resultIntent.getData(),
+//                                                            hands.getGlContext(),
+//                                                            glSurfaceView.getWidth(),
+//                                                            glSurfaceView.getHeight()));
+//                                }
+//                            }
+//                        });
+//        Button loadVideoButton = findViewById(R.id.btn_load_video);
+//        loadVideoButton.setOnClickListener(
+//                v -> {
+//                    stopCurrentPipeline();
+//                    setupStreamingModePipeline(InputSource.VIDEO);
+//                    // Reads video from gallery.
+//                    Intent pickVideoIntent = new Intent(Intent.ACTION_PICK);
+//                    pickVideoIntent.setDataAndType(MediaStore.Video.Media.INTERNAL_CONTENT_URI, "video/*");
+//                    videoGetter.launch(pickVideoIntent);
 //                });
-//        hands.setErrorListener((message, e) -> Log.e(TAG, "MediaPipe Hands error:" + message));
-//
-//        // Updates the preview layout.
-//        FrameLayout frameLayout = findViewById(R.id.video_previewer_surface);
-//        frameLayout.removeAllViewsInLayout();
-//        imageView.setImageDrawable(null);
-//        frameLayout.addView(imageView);
-//        imageView.setVisibility(View.VISIBLE);
 //    }
 
-    /** Sets up the UI components for the video demo. */
-    private void setupVideoDemoUiComponents() {
-        // The Intent to access gallery and read a video file.
-        videoGetter =
-                registerForActivityResult(
-                        new ActivityResultContracts.StartActivityForResult(),
-                        result -> {
-                            Intent resultIntent = result.getData();
-                            if (resultIntent != null) {
-                                if (result.getResultCode() == RESULT_OK) {
-                                    glSurfaceView.post(
-                                            () ->
-                                                    videoInput.start(
-                                                            this,
-                                                            resultIntent.getData(),
-                                                            hands.getGlContext(),
-                                                            glSurfaceView.getWidth(),
-                                                            glSurfaceView.getHeight()));
-                                }
-                            }
-                        });
-        Button loadVideoButton = findViewById(R.id.button_load_video);
-        loadVideoButton.setOnClickListener(
-                v -> {
-                    stopCurrentPipeline();
-                    setupStreamingModePipeline(InputSource.VIDEO);
-                    // Reads video from gallery.
-                    Intent pickVideoIntent = new Intent(Intent.ACTION_PICK);
-                    pickVideoIntent.setDataAndType(MediaStore.Video.Media.INTERNAL_CONTENT_URI, "video/*");
-                    videoGetter.launch(pickVideoIntent);
-                });
-    }
-
-    /** Sets up the UI components for the live demo with camera input. */
-    private void setupLiveDemoUiComponents() {
-        Button startCameraButton = findViewById(R.id.button_start_camera);
-        startCameraButton.setOnClickListener(
-                v -> {
-                    if (inputSource == InputSource.CAMERA) {
-                        return;
-                    }
-                    stopCurrentPipeline();
-                    setupStreamingModePipeline(InputSource.CAMERA);
-                });
-    }
+//    /** Sets up the UI components for the live demo with camera input. */
+//    private void setupLiveDemoUiComponents() {
+//        Button startCameraButton = findViewById(R.id.btn_start_camera);
+//        startCameraButton.setOnClickListener(
+//                v -> {
+//                    if (inputSource == InputSource.CAMERA) {
+//                        return;
+//                    }
+//                    stopCurrentPipeline();
+//                    setupStreamingModePipeline(InputSource.CAMERA);
+//                });
+//    }
 
     /** Sets up core workflow for streaming mode. */
-    private void setupStreamingModePipeline(InputSource inputSource) {
+    protected void setupStreamingModePipeline(InputSource inputSource, byte[] videoBuffer) {
+
         this.inputSource = inputSource;
         // Initializes a new MediaPipe Hands solution instance in the streaming mode.
         hands =
@@ -320,7 +240,9 @@ public class HandTracking extends AppCompatActivity {
                 glSurfaceView.getHeight());
     }
 
-    private void stopCurrentPipeline() {
+
+    protected void stopCurrentPipeline() {
+
         if (cameraInput != null) {
             cameraInput.setNewFrameListener(null);
             cameraInput.close();

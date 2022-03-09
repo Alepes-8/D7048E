@@ -1,9 +1,11 @@
 package com.dji.FPVDemo;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
@@ -13,10 +15,35 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import android.widget.ToggleButton;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
+
+import com.google.mediapipe.solutioncore.CameraInput;
+import com.google.mediapipe.solutioncore.SolutionGlSurfaceView;
+import com.google.mediapipe.solutioncore.VideoInput;
+import com.google.mediapipe.solutions.facedetection.FaceDetection;
+import com.google.mediapipe.solutions.facedetection.FaceDetectionOptions;
+import com.google.mediapipe.solutions.facedetection.FaceDetectionResult;
+import com.google.mediapipe.solutions.facedetection.FaceKeypoint;
+import com.google.mediapipe.formats.proto.LocationDataProto.LocationData.RelativeKeypoint;
+
+import com.google.mediapipe.formats.proto.LandmarkProto.Landmark;
+import com.google.mediapipe.formats.proto.LandmarkProto.NormalizedLandmark;
+import com.google.mediapipe.solutioncore.CameraInput;
+import com.google.mediapipe.solutioncore.SolutionGlSurfaceView;
+import com.google.mediapipe.solutioncore.VideoInput;
+import com.google.mediapipe.solutions.hands.HandLandmark;
+import com.google.mediapipe.solutions.hands.Hands;
+import com.google.mediapipe.solutions.hands.HandsOptions;
+import com.google.mediapipe.*;
+import com.google.mediapipe.solutions.hands.HandsResult;
 
 import dji.common.camera.SettingsDefinitions;
 import dji.common.camera.SystemState;
@@ -50,6 +77,8 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
     private Button mCaptureBtn, mUpBtn, mDownBtn;
     private Button mTakeoffBtn, mLandingBtn;
     private TextView recordingTime;
+    private Hands hands;
+    private static final boolean RUN_ON_GPU = true;
 
     private Handler handler;
 
@@ -73,7 +102,9 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
                 }
                 Python py = Python.getInstance();
                 PyObject module = py.getModule("test");
-                module.callAttr("handTest", videoBuffer);
+                //module.callAttr("handTest", videoBuffer);
+
+                //VideoInput videoInput = new VideoInput();
 
 
             }
@@ -121,6 +152,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         }
 
     }
+
 
     protected void onProductChange() {
         initPreviewer();

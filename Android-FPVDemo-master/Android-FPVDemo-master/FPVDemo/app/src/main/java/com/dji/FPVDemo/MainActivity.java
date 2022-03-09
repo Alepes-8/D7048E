@@ -104,9 +104,6 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
                     handTracking.stopCurrentPipeline();
                     handTracking.setupStreamingModePipeline(HandTracking.InputSource.VIDEO, videoBuffer);
                 }
-                Python py = Python.getInstance();
-                PyObject module = py.getModule("test");
-                System.out.println(module.callAttr("getControlSignal", videoBuffer));
 
 
             }

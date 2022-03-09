@@ -17,9 +17,32 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import android.widget.ToggleButton;
 
+
 import androidx.activity.result.contract.ActivityResultContracts;
+
+
+import com.google.mediapipe.solutioncore.CameraInput;
+import com.google.mediapipe.solutioncore.SolutionGlSurfaceView;
+import com.google.mediapipe.solutioncore.VideoInput;
+import com.google.mediapipe.solutions.facedetection.FaceDetection;
+import com.google.mediapipe.solutions.facedetection.FaceDetectionOptions;
+import com.google.mediapipe.solutions.facedetection.FaceDetectionResult;
+import com.google.mediapipe.solutions.facedetection.FaceKeypoint;
+import com.google.mediapipe.formats.proto.LocationDataProto.LocationData.RelativeKeypoint;
+
+import com.google.mediapipe.formats.proto.LandmarkProto.Landmark;
+import com.google.mediapipe.formats.proto.LandmarkProto.NormalizedLandmark;
+import com.google.mediapipe.solutioncore.CameraInput;
+import com.google.mediapipe.solutioncore.SolutionGlSurfaceView;
+import com.google.mediapipe.solutioncore.VideoInput;
+import com.google.mediapipe.solutions.hands.HandLandmark;
+import com.google.mediapipe.solutions.hands.Hands;
+import com.google.mediapipe.solutions.hands.HandsOptions;
+import com.google.mediapipe.*;
+import com.google.mediapipe.solutions.hands.HandsResult;
 
 import dji.common.camera.SettingsDefinitions;
 import dji.common.camera.SystemState;
@@ -79,6 +102,8 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
     private Button mCaptureBtn, mUpBtn, mDownBtn;
     private Button mTakeoffBtn, mLandingBtn, mLeftBtn;
     private TextView recordingTime;
+    private Hands hands;
+    private static final boolean RUN_ON_GPU = true;
 
     private Handler handler;
 
@@ -104,6 +129,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
                     handTracking.stopCurrentPipeline();
                     handTracking.setupStreamingModePipeline(HandTracking.InputSource.VIDEO, videoBuffer);
                 }
+
 
 
             }
@@ -152,6 +178,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
 
     }
 
+
     /** Sets up the UI components for the live demo with camera input. */
     private void setupLiveDemoUiComponents() {
         Button startCameraButton = findViewById(R.id.btn_start_camera);
@@ -175,6 +202,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
                     handTracking.setupStreamingModePipeline(HandTracking.InputSource.VIDEO, null);
                 });
     }
+
 
     protected void onProductChange() {
         initPreviewer();

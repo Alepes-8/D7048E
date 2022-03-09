@@ -1,3 +1,4 @@
+
 package com.dji.FPVDemo;
 
 import android.content.Context;
@@ -15,6 +16,7 @@ import java.util.List;
 
 /** An ImageView implementation for displaying {@link HandsResult}. */
 public class HandsResultImageView extends AppCompatImageView {
+
     private static final String TAG = "HandsResultImageView";
 
     private static final int LEFT_HAND_CONNECTION_COLOR = Color.parseColor("#30FF30");
@@ -110,4 +112,5 @@ public class HandsResultImageView extends AppCompatImageView {
                     landmarkPaint);
         }
     }
+
 }

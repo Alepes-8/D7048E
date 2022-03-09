@@ -1,5 +1,5 @@
-package com.dji.FPVDemo;
 
+package com.dji.FPVDemo;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -29,11 +29,14 @@ import java.io.InputStream;
 
 /** Main activity of MediaPipe Hands app. */
 public class HandTracking extends AppCompatActivity {
+
     private static final String TAG = "MainActivity";
+
 
     private Hands hands;
     // Run the pipeline and the model inference on GPU or CPU.
     private static final boolean RUN_ON_GPU = true;
+
 
     protected enum InputSource {
         UNKNOWN,
@@ -41,6 +44,7 @@ public class HandTracking extends AppCompatActivity {
         CAMERA,
     }
     protected InputSource inputSource = InputSource.UNKNOWN;
+
 
     // Image demo UI and image loader components.
     private ActivityResultLauncher<Intent> imageGetter;
@@ -56,9 +60,11 @@ public class HandTracking extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 //        setContentView(R.layout.activity_main);
 //        setupVideoDemoUiComponents();
 //        setupLiveDemoUiComponents();
+
     }
 
     @Override
@@ -86,7 +92,9 @@ public class HandTracking extends AppCompatActivity {
         }
     }
 
+
     protected Bitmap downscaleBitmap(Bitmap originalBitmap) {
+
         double aspectRatio = (double) originalBitmap.getWidth() / originalBitmap.getHeight();
         int width = imageView.getWidth();
         int height = imageView.getHeight();
@@ -98,7 +106,9 @@ public class HandTracking extends AppCompatActivity {
         return Bitmap.createScaledBitmap(originalBitmap, width, height, false);
     }
 
+
     protected Bitmap rotateBitmap(Bitmap inputBitmap, InputStream imageData) throws IOException {
+
         int orientation =
                 new ExifInterface(imageData)
                         .getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
@@ -122,6 +132,7 @@ public class HandTracking extends AppCompatActivity {
         return Bitmap.createBitmap(
                 inputBitmap, 0, 0, inputBitmap.getWidth(), inputBitmap.getHeight(), matrix, true);
     }
+
 
 
 //    /** Sets up the UI components for the video demo. */
@@ -172,6 +183,7 @@ public class HandTracking extends AppCompatActivity {
 
     /** Sets up core workflow for streaming mode. */
     protected void setupStreamingModePipeline(InputSource inputSource, byte[] videoBuffer) {
+
         this.inputSource = inputSource;
         // Initializes a new MediaPipe Hands solution instance in the streaming mode.
         hands =
@@ -228,7 +240,9 @@ public class HandTracking extends AppCompatActivity {
                 glSurfaceView.getHeight());
     }
 
+
     protected void stopCurrentPipeline() {
+
         if (cameraInput != null) {
             cameraInput.setNewFrameListener(null);
             cameraInput.close();

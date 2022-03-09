@@ -1,11 +1,14 @@
+
 package com.dji.FPVDemo;
 
 
 import android.opengl.GLES20;
+
 import com.google.mediapipe.formats.proto.LandmarkProto.NormalizedLandmark;
 import com.google.mediapipe.solutioncore.ResultGlRenderer;
 import com.google.mediapipe.solutions.hands.Hands;
 import com.google.mediapipe.solutions.hands.HandsResult;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -13,6 +16,7 @@ import java.util.List;
 
 /** A custom implementation of {@link ResultGlRenderer} to render {@link HandsResult}. */
 public class HandsResultGlRenderer implements ResultGlRenderer<HandsResult> {
+
     private static final String TAG = "HandsResultGlRenderer";
 
     private static final float[] LEFT_HAND_CONNECTION_COLOR = new float[] {0.2f, 1f, 0.2f, 1f};
@@ -165,4 +169,5 @@ public class HandsResultGlRenderer implements ResultGlRenderer<HandsResult> {
         GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, 0, vertexBuffer);
         GLES20.glDrawArrays(GLES20.GL_LINE_STRIP, 0, vertexCount);
     }
+
 }

@@ -4,6 +4,7 @@ import static dji.common.flightcontroller.FlightOrientationMode.*;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.os.Handler;
@@ -129,6 +130,11 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
                     handTracking.stopCurrentPipeline();
                     handTracking.setupStreamingModePipeline(HandTracking.InputSource.VIDEO, videoBuffer);
                 }
+
+                Bitmap bitmap = BitmapFactory.decodeByteArray(videoBuffer, 0, size);
+
+                hands.send(bitmap);
+
 
 
 

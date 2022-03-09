@@ -19,17 +19,8 @@
       android:orientation="horizontal"
       android:layout_alignParentBottom="true"
          android:id="@+id/linearLayout">
-    <Button
-        android:id="@+id/btn_capture"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_gravity="center_vertical"
 
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
-
-        <Button
+         <Button
             android:id="@+id/btn_capture"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

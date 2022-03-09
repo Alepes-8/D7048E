@@ -21,20 +21,24 @@
          android:id="@+id/linearLayout">
 
          <Button
-            android:id="@+id/btn_capture"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:text="Capture"
-            android:textSize="12sp" />
 
-        <Button
-            android:id="@+id/btn_takeoff"
-            android:layout_width="6dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Takeoff" />
+             android:id="@+id/btn_capture"
+             android:layout_width="18dp"
+             android:layout_height="wrap_content"
+             android:layout_alignParentBottom="true"
+
+             android:layout_gravity="center_vertical"
+             android:layout_weight="1"
+             android:orientation="horizontal"
+             tools:text="Capture" />
+
+         <Button
+             android:id="@+id/btn_takeoff"
+             android:layout_width="13dp"
+             android:layout_height="wrap_content"
+             android:layout_weight="1"
+             android:text="Takeoff" />
+
 
         <Button
             android:id="@+id/btn_landing"

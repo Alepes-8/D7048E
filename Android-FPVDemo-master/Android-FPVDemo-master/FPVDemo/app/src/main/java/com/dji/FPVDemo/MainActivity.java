@@ -74,6 +74,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.exifinterface.media.ExifInterface;
 // ContentResolver dependency
+import com.google.mediapipe.solutioncore.SolutionGlSurfaceView;
 import com.google.mediapipe.formats.proto.LandmarkProto.Landmark;
 import com.google.mediapipe.formats.proto.LandmarkProto.NormalizedLandmark;
 import com.google.mediapipe.framework.PacketCreator;
@@ -105,6 +106,8 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
     private TextView recordingTime;
     private Hands hands;
     private static final boolean RUN_ON_GPU = true;
+    private SolutionGlSurfaceView<HandsResult> glSurfaceView;
+    private HandsResultImageView imageView;
 
     private Handler handler;
 
@@ -115,6 +118,16 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         setContentView(R.layout.activity_main);
 
         handler = new Handler();
+
+        hands =
+                new Hands(
+                        this,
+                        HandsOptions.builder()
+                                .setStaticImageMode(false)
+                                .setMaxNumHands(2)
+                                .setRunOnGpu(RUN_ON_GPU)
+                                .build());
+        hands.setErrorListener((message, e) -> Log.e(TAG, "MediaPipe Hands error:" + message));
 
         initUI();
         setupVideoDemoUiComponents();
@@ -127,8 +140,28 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
             public void onReceive(byte[] videoBuffer, int size) {
                 if (mCodecManager != null) {
                     mCodecManager.sendDataToDecoder(videoBuffer, size);
-                    handTracking.stopCurrentPipeline();
-                    handTracking.setupStreamingModePipeline(HandTracking.InputSource.VIDEO, videoBuffer);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(videoBuffer, 0, size);
+                    hands.send(bitmap);
+
+                    // Initializes a new Gl surface view with a user-defined HandsResultGlRenderer.
+                    glSurfaceView =
+                            new SolutionGlSurfaceView<>(handTracking, hands.getGlContext(), hands.getGlMajorVersion());
+                    glSurfaceView.setSolutionResultRenderer(new HandsResultGlRenderer());
+                    glSurfaceView.setRenderInputImage(true);
+                    hands.setResultListener(
+                            handsResult -> {
+                                handTracking.logWristLandmark(handsResult, /*showPixelValues=*/ false);
+                                glSurfaceView.setRenderData(handsResult);
+                                glSurfaceView.requestRender();
+                            });
+
+                    // Updates the preview layout.
+                    FrameLayout frameLayout = findViewById(R.id.video_previewer_surface);
+                    imageView.setVisibility(View.GONE);
+                    frameLayout.removeAllViewsInLayout();
+                    frameLayout.addView(glSurfaceView);
+                    glSurfaceView.setVisibility(View.VISIBLE);
+                    frameLayout.requestLayout();
                 }
 
                 Bitmap bitmap = BitmapFactory.decodeByteArray(videoBuffer, 0, size);
@@ -209,11 +242,9 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
                 });
     }
 
-
     protected void onProductChange() {
         initPreviewer();
     }
-
 
     @Override
     public void onResume() {
@@ -254,7 +285,7 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
 
     private void initUI() {
         // init mVideoSurface
-        mVideoSurface = (TextureView)findViewById(R.id.video_previewer_surface);
+//        mVideoSurface = (TextureView)findViewById(R.id.video_previewer_surface);
 
         recordingTime = (TextView) findViewById(R.id.timer);
         mCaptureBtn = (Button) findViewById(R.id.btn_capture);
@@ -264,9 +295,9 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         mLandingBtn = (Button) findViewById(R.id.btn_landing);
         mLeftBtn = (Button) findViewById(R.id.btn_left);
 
-        if (null != mVideoSurface) {
-            mVideoSurface.setSurfaceTextureListener(this);
-        }
+//        if (null != mVideoSurface) {
+//            mVideoSurface.setSurfaceTextureListener(this);
+//        }
 
         mCaptureBtn.setOnClickListener(this);
         mTakeoffBtn.setOnClickListener(this);
@@ -286,9 +317,9 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         if (product == null || !product.isConnected()) {
             showToast(getString(R.string.disconnected));
         } else {
-            if (null != mVideoSurface) {
-                mVideoSurface.setSurfaceTextureListener(this);
-            }
+//            if (null != mVideoSurface) {
+//                mVideoSurface.setSurfaceTextureListener(this);
+//            }
             if (!product.getModel().equals(Model.UNKNOWN_AIRCRAFT)) {
                 VideoFeeder.getInstance().getPrimaryVideoFeed().addVideoDataListener(mReceivedVideoDataListener);
             }
@@ -434,31 +465,6 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
     }
 
 
-    private void switchCameraFlatMode(SettingsDefinitions.FlatCameraMode flatCameraMode){
-        Camera camera = FPVDemoApplication.getCameraInstance();
-        if (camera != null) {
-            camera.setFlatMode(flatCameraMode, error -> {
-                if (error == null) {
-                    showToast("Switch Camera Flat Mode Succeeded");
-                } else {
-                    showToast(error.getDescription());
-                }
-            });
-        }
-    }
-
-    private void switchCameraMode(SettingsDefinitions.CameraMode cameraMode){
-        Camera camera = FPVDemoApplication.getCameraInstance();
-        if (camera != null) {
-            camera.setMode(cameraMode, error -> {
-                if (error == null) {
-                    showToast("Switch Camera Mode Succeeded");
-                } else {
-                    showToast(error.getDescription());
-                }
-            });
-        }
-    }
 
     // Method for taking photo
     private void captureAction(){
@@ -504,34 +510,6 @@ public class MainActivity extends Activity implements SurfaceTextureListener,OnC
         }, 2000);
     }
 
-    // Method for starting recording
-    private void startRecord(){
-        final Camera camera = FPVDemoApplication.getCameraInstance();
-        if (camera != null) {
-            camera.startRecordVideo(djiError -> {
-                if (djiError == null) {
-                    showToast("Record video: success");
-                }else {
-                    showToast(djiError.getDescription());
-                }
-            }); // Execute the startRecordVideo API
-        }
-    }
-
-    // Method for stopping recording
-    private void stopRecord(){
-
-        Camera camera = FPVDemoApplication.getCameraInstance();
-        if (camera != null) {
-            camera.stopRecordVideo(djiError -> {
-                if(djiError == null) {
-                    showToast("Stop recording: success");
-                }else {
-                    showToast(djiError.getDescription());
-                }
-            }); // Execute the stopRecordVideo API
-        }
-    }
 
     private boolean isMavicAir2(){
         BaseProduct baseProduct = FPVDemoApplication.getProductInstance();
